@@ -85,6 +85,7 @@ class FileContainer extends Component {
                     teamName={context.teamName}
                     paging={context.state.paging}
                     files={context.state.files}
+                    burstDeleteFiles={context.burstDeleteFiles}
                     deleteFile={context.deleteFile}
                     handlePageUpdate={context.handlePageUpdate}
                   />

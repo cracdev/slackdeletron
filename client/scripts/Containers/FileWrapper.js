@@ -15,6 +15,7 @@ import congratsBud from '../../images/congratsBud.svg';
 export default class FileWrapper extends Component {
   static propTypes = {
     deleteFile: PropTypes.func,
+    burstDeleteFiles: PropTypes.func,
     handlePageUpdate: PropTypes.func,
     files: PropTypes.array,
     teamName: PropTypes.string,
@@ -27,7 +28,7 @@ export default class FileWrapper extends Component {
     size: 'none',
     date: 'newest',
   };
-
+  
   onSizeChange = (e) => {
     this.setState({
       size: e.target.value,
@@ -48,6 +49,10 @@ export default class FileWrapper extends Component {
   onPageIncrement = (val) => {
     if (val > this.props.paging.pages) return;
     this.props.handlePageUpdate(this.props.paging.page + 1);
+  };
+
+  onDeleteAllClick = (e) => {
+    this.props.burstDeleteFiles();
   };
 
   displayButtons() {
@@ -73,6 +78,18 @@ export default class FileWrapper extends Component {
     );
   }
 
+  displayDeleteAll() {
+    return (
+      <div className="FileWrapper__delete-all">
+        <Button
+          text="Delete All Files Bellow"
+          classes="File__Button"
+          onClick={this.onDeleteAllClick}
+        />
+      </div>
+    );
+  }
+
   displayFilters() {
     const files = this.props.files;
     if (!files.length) {
@@ -86,8 +103,8 @@ export default class FileWrapper extends Component {
           total={this.props.paging.total}
           teamName={this.props.teamName}
         />
+        {this.displayDeleteAll()}
         {this.displayButtons()}
-
         <Filters
           sizeValue={this.state.size}
           dateValue={this.state.date}
@@ -100,7 +117,6 @@ export default class FileWrapper extends Component {
 
   renderFiles() {
     const files = sortFiles(this.props.files, this.state.size, this.state.date);
-
     return files.map((file) => (
       <div className="col-md-3" key={file.id}>
         <File

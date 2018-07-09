@@ -4,12 +4,15 @@ exports[`<DateFields /> Renders Correctly 1`] = `
 <div>
   <withStyles(DateRangePicker)
     anchorDirection="left"
+    appendToBody={false}
     block={false}
     calendarInfoPosition="bottom"
     customArrowIcon={null}
     customCloseIcon={null}
     customInputIcon={null}
+    dayAriaLabelFormat={undefined}
     daySize={39}
+    disableScroll={false}
     disabled={false}
     displayFormat={[Function]}
     enableOutsideDays={false}

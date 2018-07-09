@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../Components/Select';
+import Button from '../Components/Button';
 
 const CHANNELS = [
   { id: 'newest', name: 'Newest' },

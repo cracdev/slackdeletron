@@ -191,7 +191,62 @@ export default class FileProvider extends Component {
       );
     }
   }, 1000);
+  
+  callFilesDelete = (files, fileIndex = 0, retries = 0) => {
+    const MAX_BURST_RETRIES = 25;
+    
+    const runRequest = async (files, fileIndex, retries) => {
+      if (retries <= MAX_BURST_RETRIES && fileIndex <= files.length - 1) {
+        const fileId = files[fileIndex].id;
+        try {
+          const res = await axios.get(`${ENDPOINT}files.delete`, {
+            params: {
+              token: this.props.accessToken,
+              file: fileId,
+            },
+          });
+    
+          if (!res.data.ok) {
+            this.props.updateError(
+              'Slack said no :( we retry delete the file',
+              'please wait....'
+            );
+            runRequest(files, fileIndex, 0);
+          } else {
+            this.deleteFile(fileId);
+            runRequest(files, ++fileIndex, ++retries);
+          }
+        } catch (err) {
+          this.props.updateError(
+            'You must be logged in!',
+            `callDeleteFile - ${err}`
+          );
+        }
+      } else {
 
+        if (fileIndex >= files.length) {
+          return;
+        }
+        
+        this.props.updateError(
+          'We are working deleting the files!!',
+          'please wait....'
+        );
+
+        setTimeout(() => {
+          runRequest(files, fileIndex, 0);
+        }, 10000);
+      }
+    };
+
+    runRequest(files, fileIndex, retries);
+  }
+  
+  burstDeleteFiles = () => {
+    const { files } = this.state;
+    this.callFilesDelete(files);
+  }
+  
   deleteFile = (fileId) => {
     const file = this.state.files.filter((item) => item.id === fileId)[0];
     const filteredFiles = this.state.files.filter((item) => item.id !== fileId);
@@ -221,6 +276,7 @@ export default class FileProvider extends Component {
           channels: this.props.channels,
           getFiles: this.getFiles,
           deleteFile: this.callDeleteFile,
+          burstDeleteFiles: this.burstDeleteFiles,
           handlePageUpdate: this.handlePageUpdate,
         }}
       >

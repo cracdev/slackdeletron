@@ -40,7 +40,6 @@ class Form extends Component {
   };
 
   updateDate = ({ startDate, endDate }) => {
-    // console.log(startDate, endDate);
     this.setState({ startDate, endDate });
   };
 
